@@ -1,0 +1,412 @@
+openapi: 3.0.1
+info:
+  title: Monte wallets
+  description: Service of online banking
+  version: 1.0.0
+  license:
+      name: Apache 2.0
+      url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+- url: https://monte.swagger.io
+tags:
+- name: user
+  description: Operations with users
+- name: wallet
+  description: Operations with wallets
+- name: transaction
+  description: Opetations with transactions
+paths:
+  /user:
+    get:
+      tags:
+      - user
+      description: Lists users
+      parameters:
+      - name: email
+        in: query
+        description: "Email filter "
+        schema:
+          type: string
+      - name: name
+        in: query
+        description: "Name filter"
+        schema:
+          type: string
+      responses:
+        200:
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/users_data'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+    post:
+      tags:
+      - user
+      description: Create user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_user'
+        required: true
+      responses:
+        200:
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users_data'
+        default:
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+  /user/{user_id}:
+    get:
+      tags:
+      - user
+      description: Gets users ID
+      parameters:
+      - name: user_id
+        in: path
+        description: 'UserID'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Target user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users_data'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+    put:
+      tags:
+      - user
+      description: Updates user
+      parameters:
+      - name: user_id
+        in: path
+        description: 'UserID'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: User update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_user'
+        required: true
+      responses:
+        default:
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+    delete:
+      tags:
+      - user
+      description: Delete user
+      parameters:
+      - name: user_id
+        in: path
+        description: 'UserID'
+        required: true
+        schema:
+          type: integer
+      responses:
+        default:
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+  /wallet:
+    get:
+      tags:
+      - wallet
+      description: Wallets list
+      responses:
+        200:
+          description: List of wallets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/wallet_data'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+    post:
+      tags:
+      - wallet
+      description: Create wallet 
+      requestBody:
+        description: New wallet
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/create_wallet'
+        required: true
+      responses:
+        200:
+          description: Created wallet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wallet_data'
+        default:
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+  /wallet/{wallet_id}:
+    get:
+      tags:
+      - wallet
+      description: Gets walletID
+      parameters:
+      - name: wallet_id
+        in: path
+        description: 'WalletID'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Target wallet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/wallet_data'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+    put:
+      tags:
+      - wallet
+      description: Update wallet 
+      parameters:
+      - name: wallet_id
+        in: path
+        description: 'WalletID'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: Wallet data udpate
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_wallet'
+        required: true
+      responses:
+        default:
+          description: Creation status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+    delete:
+      tags:
+      - wallet
+      description: Delete wallet 
+      parameters:
+      - name: wallet_id
+        in: path
+        description: 'WalletID'
+        required: true
+        schema:
+          type: integer
+      responses:
+        default:
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+  /wallet/{wallet_id}/send-money:
+    post:
+      tags:
+      - transaction
+      description: Send money to another user
+      parameters:
+      - name: wallet_id
+        in: path
+        description: 'WalletID to send money from'
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: Details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/send_money'
+        required: true
+      responses:
+        200:
+          description: Data of transaction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/transaction_data'
+        default:
+          description: Status of transaction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+  /wallet/{wallet_id}/transaction:
+    get:
+      tags:
+      - transaction
+      description: Get taransaction with a wallet of the one user
+      parameters:
+      - name: wallet_id
+        in: path
+        description: 'WalletID'
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Trransaction with a target wallet
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/transaction_data'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status'
+components:
+  schemas:
+    users_data:
+      required:
+      - id
+      - email
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+    create_user:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+    update_user:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+    wallet_data:
+      required:
+      - id
+      - funds
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        funds:
+          type: integer
+    create_wallet:
+      type: object
+      properties:
+        name:
+          type: string
+    update_wallet:
+      type: object
+      properties:
+        name:
+          type: string
+    send_money:
+      required:
+      - to_wallet
+      - amount
+      type: object
+      properties:
+        to_wallet:
+          type: integer
+        amount:
+          type: integer
+    transaction_data:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: integer
+        from_wallet:
+          type: integer
+          nullable: true
+        to_wallet:
+          type: integer
+        amount:
+          type: integer
+        datetime:
+          type: string
+          format: date-time
+    status:
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
